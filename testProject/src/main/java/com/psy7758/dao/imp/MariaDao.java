@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 
 import com.psy7758.context.ServletContextHolder;
 import com.psy7758.dao.CommonModule;
-import com.psy7758.dto.Client;
+import com.psy7758.dto.Notice;
 
 public class MariaDao extends CommonModule {
    private static ServletContext context = ServletContextHolder.getServletContext();
@@ -23,19 +23,26 @@ public class MariaDao extends CommonModule {
    }
    
    @Override
-   public ArrayList<Client> getClient(String searchField, String searchWord, boolean pub) throws SQLException {
-      String selectSql = String.format("SELECT @rowNum := @rowNum + 1 num, client.* "
-            + "FROM client, ( SELECT @rowNUm := 0 ) rn "
+   public ArrayList<Notice> getNotices(int pageNum, String searchField, String searchWord, boolean pub) throws SQLException {
+      String selectSql = String.format("SELECT * FROM NOTICE "
             + "WHERE %s LIKE ? %s "
-            + "ORDER BY regDate", searchField, pub ? "" : "AND pub = 1");
+            + "ORDER BY REGDATE DESC "
+            + "LIMIT %d, %d;",
+            searchField, pub ? "" : "AND pub = 1", ( pageNum - 1 ) * getPagingSizeValue(), getPagingSizeValue()
+      );
       
-      return getClientData(selectSql, searchWord);
+      return getNoticesDb(selectSql, searchWord);
    }
    
    @Override
-   public int setClientPubTrue(String id) throws SQLException {
+   public Notice getCurrentNotice(int id) throws SQLException {
+      return getCurrentNoticeDb(id);
+   }
+   
+   @Override
+   public int setPub(String id) throws SQLException {
       String updateSql = String.format("UPDATE client set pub = 1 WHERE id = ?");
       
-      return setPub(updateSql, id);
+      return setPubDb(updateSql, id);
    }
 }

@@ -1,0 +1,88 @@
+* {
+    list-style: none;
+}
+
+.table {
+    display: grid;
+
+    grid-template: repeat(5, 50px) 200px/ 3fr 7fr;
+}
+
+.table div {
+    border: 1px solid;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.table div:nth-child(odd) {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+.table div:nth-child(even) {
+    justify-content: start;
+    text-indent: 10px;
+}
+
+.table div:last-child {
+    grid-column: 1/-1;
+    background-color: aqua;
+    color: red;
+}
+
+.table .attachedfilesList {
+   display:block;
+}
+
+.table .attachedfilesList a {
+   text-decoration: none;
+}
+
+.table .attachedfilesList a:hover {
+   text-decoration: underline;
+   background-color: rgb(213, 218, 218);
+}
+
+.colorRed {
+    color: red;
+}
+
+.pageNationPart {
+    text-align: center;
+}
+
+.btn {
+    display: grid;
+
+    grid-template-columns: 60px 60px;
+    justify-content: center;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ======================================================= */
+
+.pageNavigation {
+    display: grid;
+    grid-template: repeat(3, 50px)/ 1fr 9fr;
+}
+
+.pageNavigation div:first-child {
+    grid-column: 1/-1;
+    justify-self: center;
+
+    margin-top: 10px;
+    color: red;
+    font-size: 1.3em;
+}
+
+.pageNavigation div:not(:first-child) {
+    border: 1px solid;
+
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}

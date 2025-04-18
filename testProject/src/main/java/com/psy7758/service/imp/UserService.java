@@ -6,21 +6,42 @@ import java.util.ArrayList;
 import com.psy7758.dao.Dao;
 import com.psy7758.dao.imp.MariaDao;
 import com.psy7758.dao.imp.MysqlDao;
-import com.psy7758.dto.Client;
+//import com.psy7758.dao.imp.OracleDao;
+import com.psy7758.dto.Notice;
 import com.psy7758.service.Service;
 
 public class UserService implements Service{
+//   private Dao dao = new OracleDao();
    private Dao dao = new MysqlDao();
 //   private Dao dao = new MariaDao();
 
    @Override
-   public ArrayList<Client> getClient() throws SQLException {
-      return getClient("id", "");
-   }
-
-   @Override
-   public ArrayList<Client> getClient(String searchField, String searchWord) throws SQLException {
-      return dao.getClient(searchField, searchWord, false);
+   public ArrayList<Notice> getNotices(int pageNum){
+      return getNotices(pageNum, "id", "");
    }
    
+   @Override
+   public ArrayList<Notice> getNotices(int pageNum, String searchField, String searchWord) {
+      ArrayList<Notice> notices = null;
+      try {
+         notices = dao.getNotices(pageNum, searchField, searchWord, false);
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+      
+      return notices;
+   }
+   
+   @Override
+   public Notice getCurrentNotice(int id) {   // 기존 getNotice 메서드를 getCurrentNotice 로 메서드명 변경.
+      Notice notice = null;
+      
+      try {
+         notice = dao.getCurrentNotice(id);
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+      
+      return notice;
+   }
 }

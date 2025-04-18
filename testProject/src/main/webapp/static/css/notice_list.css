@@ -1,0 +1,31 @@
+* {
+   list-style: none;
+}
+
+.table {
+   display: grid;
+   grid-template-columns: 3fr 20fr 9fr 12fr 4fr;
+   row-gap: 10px;
+}
+
+.colorRed {
+   color: red;
+}
+
+.pageNationPart {
+   text-align: center;
+}
+
+.btn {
+   display: grid;
+   grid-template-columns: 60px 60px;
+   justify-content: center;
+}
+
+.hidden {
+   display: none;
+}
+
+li {
+   display: inline-block;
+}
