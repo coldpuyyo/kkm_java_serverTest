@@ -33,11 +33,65 @@ public class UserService implements Service{
    }
    
    @Override
-   public Notice getCurrentNotice(int id) {   // 기존 getNotice 메서드를 getCurrentNotice 로 메서드명 변경.
+   public int getNoticeCnt() {
+      return getNoticeCnt("id", "");
+   }
+   
+   @Override
+   public int getNoticeCnt(String searchField, String searchWord) {
+      int noticeCnt = 0;
+      
+      try {
+         noticeCnt = dao.getNoticeCnt(searchField, searchWord, false);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      
+      return noticeCnt;
+   }
+   
+   @Override
+   public Notice getCurrentNotice(int id) {
       Notice notice = null;
       
       try {
          notice = dao.getCurrentNotice(id);
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+      
+      return notice;
+   }
+
+   @Override
+   public Notice getPrevNotice(int id) {
+      return getPrevNotice(id, "id", "");
+   }
+
+   @Override
+   public Notice getPrevNotice(int id, String searchField, String searchWord) {
+      Notice notice = null;
+      
+      try {
+         notice = dao.getPrevNotice(id, searchField, searchWord, false);
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
+      
+      return notice;
+   }
+
+   @Override
+   public Notice getNextNotice(int id) {
+      return getNextNotice(id, "id", "");
+   }
+
+   @Override
+   public Notice getNextNotice(int id, String searchField, String searchWord) {
+      Notice notice = null;
+      
+      try {
+         notice = dao.getNextNotice(id, searchField, searchWord, false);
       } catch (SQLException e) {
          e.printStackTrace();
       }

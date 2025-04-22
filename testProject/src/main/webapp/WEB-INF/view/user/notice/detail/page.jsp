@@ -1,12 +1,6 @@
-<%@page import="com.psy7758.service.imp.AdminService"%>
-<%@page import="java.util.ArrayList"%>
 <%@page import="com.psy7758.dto.Notice"%>
-<!-- ================================================================================================== -->
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
-<!-- ================================================================================================== -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
    
@@ -15,7 +9,7 @@
 
 <head>
    <meta charset="UTF-8">
-   <title>detail.jsp 페이지의 첨부 파일에 대한 목록 분리와 링크 설정</title>
+   <title>detail.jsp 페이지에서의 이전/다음 페이지 구현을 위한 서비스 및 DAO 계층 메서드 추가와  DetailListController 추가 및 수정</title>
    
    <link rel="stylesheet" href="/static/css/notice_detail_page.css">
 </head>
@@ -35,40 +29,47 @@
                <div>${noticeModel.writer_id}</div>
                <div>조회수</div>
                <div>${noticeModel.hit}</div>
-               
-               <!-- ====================================================================================================================== -->      
-               
                <div>첨부파일</div>
                <div class="attachedfilesList">
                   <c:forTokens var="file" items="${noticeModel.files}" delims="," varStatus="status">
                           <a href="${file}">
-                              <c:choose>
-                                  <c:when test="${fn:endsWith(file, 'gif')}">${fn:toUpperCase(file)}</c:when>
-                                  <c:otherwise>${file}</c:otherwise>
-                              </c:choose>
-      
-                              <%-- ${fn:endsWith(file, 'gif' ) ? fn:toUpperCase(file) : file} --%>
+                              ${fn:endsWith(file, 'gif' ) ? fn:toUpperCase(file) : file}
                           </a>
                           ${status.last ? '' : '/ '}
                        </c:forTokens>
                </div>
-               
-               <!-- ====================================================================================================================== -->      
-               
                <div>${noticeModel.content}</div>
             </div>
          </div>
          
          <div class="pageNavigation">
             <div>
-               <a href="/notice/list">목록</a>
+               <a href="/user/notice/list?pageNum=${pageNum}&searchField=${searchField}&searchWord=${searchWord}">목록</a>
             </div>
 
             <div>이전글</div>
-            <div><a href="">인터넷 보안의 핵심 원리</a></div>
+            <div>
+               <c:choose>
+                  <c:when test="${empty prevNotice}">이전글이 없습니다.</c:when>
+                  <c:otherwise>
+                     <a href="?id=${prevNotice.id}&pageNum=${pageNum}&searchField=${searchField}&searchWord=${searchWord}">
+                        ${prevNotice.title}
+                     </a>
+                  </c:otherwise>
+               </c:choose>
+            </div>
             
             <div>다음글</div>
-            <div>다음글이 없습니다.</div>
+            <div>
+               <c:choose>
+                  <c:when test="${empty nextNotice}">다음글이 없습니다.</c:when>
+                  <c:otherwise>
+                     <a href="?id=${nextNotice.id}&pageNum=${pageNum}&searchField=${searchField}&searchWord=${searchWord}">
+                        ${nextNotice.title}
+                     </a>
+                  </c:otherwise>
+               </c:choose>
+            </div>
          </div>
       </main>
    </div>

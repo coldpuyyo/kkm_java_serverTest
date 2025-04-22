@@ -1,5 +1,6 @@
 * {
    list-style: none;
+   text-decoration: none;
 }
 
 .table {
@@ -10,6 +11,7 @@
 
 .colorRed {
    color: red;
+   font-weight: bold;
 }
 
 .pageNationPart {
@@ -28,4 +30,11 @@
 
 li {
    display: inline-block;
+}
+
+.sellected {
+   background-color: silver;
+   color: red;
+   font-weight: bold;
+   text-decoration: underline;
 }

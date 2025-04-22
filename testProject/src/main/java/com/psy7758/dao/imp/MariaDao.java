@@ -35,10 +35,41 @@ public class MariaDao extends CommonModule {
    }
    
    @Override
+   public int getNoticeCnt(String searchField, String searchWord, boolean pub) throws SQLException {
+      String selectSql = String.format("SELECT COUNT(ID) CNT FROM NOTICE WHERE %s LIKE ? %s",
+            searchField, pub ? "" : "AND pub = 1");
+      
+      return getNoticeCntDb(selectSql, searchWord);
+   }
+   
+   @Override
    public Notice getCurrentNotice(int id) throws SQLException {
       return getCurrentNoticeDb(id);
    }
    
+   @Override
+   public Notice getPrevNotice(int id, String searchField, String searchWord, boolean pub) throws SQLException {
+      String selectSql = String.format("SELECT * FROM NOTICE "
+            + "WHERE %s %s LIKE ? "
+            + "AND REGDATE < (SELECT REGDATE FROM NOTICE WHERE ID = ?)"
+            + "ORDER BY REGDATE DESC "
+            + "LIMIT 1",
+            pub ? "" : "pub = 1 AND", searchField);
+      
+      return getPrevNoticeDb(selectSql, id, searchWord);
+   }
+
+   @Override
+   public Notice getNextNotice(int id, String searchField, String searchWord, boolean pub) throws SQLException {
+      String selectSql = String.format("SELECT * FROM NOTICE "
+            + "WHERE %s %s  LIKE ? "
+            + "AND REGDATE > (SELECT REGDATE FROM NOTICE WHERE ID = ?)"
+            + "LIMIT 1",
+            pub ? "" : "pub = 1 AND", searchField);
+      
+      return getNextNoticeDb(selectSql, id, searchWord);
+   }
+
    @Override
    public int setPub(String id) throws SQLException {
       String updateSql = String.format("UPDATE client set pub = 1 WHERE id = ?");
