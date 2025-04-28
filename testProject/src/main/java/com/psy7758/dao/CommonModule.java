@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 
 import com.psy7758.context.ServletContextHolder;
 import com.psy7758.dto.Notice;
+import com.psy7758.dto.view.notice.NoticeView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -39,16 +40,16 @@ public abstract class CommonModule implements Dao {
    public static int getPagingSizeValue() {
       return pagingSizeValue;
    }
-
-   public ArrayList<Notice> getNoticesDb(String selectSql, String searchWord) throws SQLException {
+   
+   public ArrayList<NoticeView> getNoticesDb(String selectSql, String searchWord) throws SQLException {
       try (Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
          preparedStatement.setString(1, "%" + searchWord + "%");
 
-         ArrayList<Notice> notices = new ArrayList<Notice>();
+         ArrayList<NoticeView> notices = new ArrayList<NoticeView>();
          try (ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-               Notice notice = new Notice();
+               NoticeView notice = new NoticeView();
 
                notice.setId(resultSet.getInt("id"));
                notice.setTitle(resultSet.getString("title"));
@@ -57,7 +58,9 @@ public abstract class CommonModule implements Dao {
                notice.setRegDate(resultSet.getTimestamp("regDate").toLocalDateTime());
                notice.setHit(resultSet.getInt("hit"));
                notice.setFiles(resultSet.getString("files"));
-
+               notice.setPub(resultSet.getBoolean("pub"));
+               notice.setCmt_cnt(resultSet.getInt("cmt_cnt"));
+               
                notices.add(notice);
             }
          }
@@ -107,11 +110,6 @@ public abstract class CommonModule implements Dao {
       }
    }
    
-   /*
-    * getPrevNoticeDb 와 getNextNoticeDb 의 로직 처리가 동일하므로 통합 실행을 위한 private 메서드 생성.
-    * 아래 메서드를 public 메서드로 만들어 개별 DAO 에서 하나의 메서드로 일관된 호출 형식을 취할수도 있지만,
-    * 내부 캡슐화와 호출 명시성을 위해 아래와같이 별도의 private 메서드로 구현.
-    */
    private Notice getPreNextNotice(String selectSql, int id, String searchWord) throws SQLException {
       try (Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(selectSql)) {
@@ -145,14 +143,75 @@ public abstract class CommonModule implements Dao {
       return getPreNextNotice(selectSql, id, searchWord);
    }
    
-   public int setPubDb(String updateSql, String id) throws SQLException {
-      try (Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSql)) {
-         preparedStatement.setString(1, id);
+   public int setPubDb(String pubSql, String nonePubSql, int[] pubTrueId_, int[] pubFalseId_) throws SQLException {
+      try (Connection connection = dataSource.getConnection()) {
+         int row = 0;
          
-         int row = preparedStatement.executeUpdate();
-
+         connection.setAutoCommit(false);
+         
+         try {
+            if( pubTrueId_.length != 0 ) {
+               try(PreparedStatement preparedStatement = connection.prepareStatement(pubSql)){
+                  for (int i = 0; i < pubTrueId_.length; i++) {
+                     preparedStatement.setInt(i + 1, pubTrueId_[i]);
+                  }
+                  
+                  row = preparedStatement.executeUpdate();
+               }
+            }
+            
+            if( pubFalseId_.length != 0 ) {
+               try(PreparedStatement preparedStatement = connection.prepareStatement(nonePubSql)){
+                  for (int i = 0; i < pubFalseId_.length; i++) {
+                     preparedStatement.setInt(i + 1, pubFalseId_[i]);
+                  }
+                  
+                  row += preparedStatement.executeUpdate();
+               }
+            }
+            
+            connection.commit();
+         } catch (Exception e) {
+            e.printStackTrace();
+            
+            connection.rollback();
+         }
+         
          return row;
-      }
+      } 
+   }
+   
+   public int delNoticeDb(String delSql, int[] delId) throws SQLException {
+      try (Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(delSql)) {
+         int row = 0;
+         
+         if( delId.length != 0 ) {
+            for (int i = 0; i < delId.length; i++) {
+               preparedStatement.setInt(i + 1, delId[i]);
+            }
+            
+            row = preparedStatement.executeUpdate();
+         }
+         
+         return row;
+      } 
+   }
+   
+   public int regNoticeDb(String insertSql, Notice notice) throws SQLException {
+      try (Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql)) {
+         int row = 0;
+         
+         preparedStatement.setString(1, notice.getTitle());
+         preparedStatement.setString(2, notice.getWriter_id());
+         preparedStatement.setString(3, notice.getFiles());
+         preparedStatement.setString(4, notice.getContent());
+         preparedStatement.setBoolean(5, notice.getPub());
+         
+         row = preparedStatement.executeUpdate();
+         
+         return row;
+      } 
    }
 }

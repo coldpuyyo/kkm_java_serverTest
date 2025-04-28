@@ -9,7 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
+//import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import com.psy7758.context.ServletContextHolder;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -58,7 +58,7 @@ public class ContextParamInitializer implements ServletContextListener {
        */
       if( dataSource != null ) {
          dataSource.close();
-         AbandonedConnectionCleanupThread.checkedShutdown();
+//         AbandonedConnectionCleanupThread.checkedShutdown();
          
          try {
             Driver driver = DriverManager.getDriver((String)(sce.getServletContext().getAttribute("closedJdbcUrl")));

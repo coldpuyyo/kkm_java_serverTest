@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.psy7758.dto.Notice;
+import com.psy7758.dto.view.notice.NoticeView;
 import com.psy7758.service.Service;
 import com.psy7758.service.imp.UserService;
 
@@ -25,7 +25,7 @@ public class NoticeListController extends HttpServlet {
       String searchWord = request.getParameter("searchWord");
       
       Service service = new UserService();
-      List<Notice> notices = null;
+      List<NoticeView> notices = null;
       int noticeCnt = 0;
       
       if( searchWord == null ) {
@@ -43,7 +43,7 @@ public class NoticeListController extends HttpServlet {
       
       request.setAttribute("pagingSizeValue", getServletContext().getInitParameter("pagingSizeValue"));
       request.setAttribute("pagenationSet", getServletContext().getInitParameter("pagenationSet"));
-      request.setAttribute("noticesModel", notices);
+      request.setAttribute("noticeViews", notices);   // 속성명 변경.
       request.setAttribute("noticeCnt", noticeCnt);
       request.setAttribute("pageNum", pageNum);
       request.setAttribute("searchField", searchField);

@@ -9,7 +9,7 @@
 
 <head>
    <meta charset="UTF-8">
-   <title>View( list.jsp ) 페이지 추가 구성( 하나의 페이지 구성 단위를  pagingSizeValue X pagenationSet 묶음 단위로 구성 )과 이전, 다음 페이지 버튼 구현 - 2</title>
+   <title>index.jsp 및 Index.java 구현</title>
    
    <link rel="stylesheet" href="/static/css/notice_list.css">
    
@@ -35,6 +35,13 @@
 </head>
 
 <body>
+   <!-- ================================================================================================================================= -->
+   <!-- 로고 링크 추가 -->
+   
+   <h1 id="logo"><a href="/">PSYLAB</a></h1>
+   
+   <!-- ================================================================================================================================= -->
+   
    <div id="body">
       <main class="main">
          <h2>공지사항</h2>
@@ -57,19 +64,23 @@
          <div>
             <h3 class="hidden">공지사항 목록</h3>
             <div class="table">
-               <div class="thead">번호</div>         <!-- thead 로 클래스 변경 -->
+               <div class="thead">번호</div>
                <div class="thead">제목</div>
                <div class="thead">작성자</div>
                <div class="thead">작성일</div>
                <div class="thead">조회수</div>
                
-               <c:forEach var="notice" items="${noticesModel}">
-                  <div>${notice.id}</div>
+               <c:forEach var="noticeView" items="${noticeViews}">
+                  <div>${noticeView.id}</div>
                   <div>
-                     <a href="detail/page?id=${notice.id}&pageNum=${pageNum}&searchField=${searchField}&searchWord=${searchWord}">${notice.title}</a></div>
-                  <div>${notice.writer_id}</div>
-                  <div>${notice.regDate}</div>
-                  <div class="colorRed">${notice.hit}</div>
+                     <a href="detail/page?id=${noticeView.id}&pageNum=${pageNum}&searchField=${searchField}&searchWord=${searchWord}">
+                     ${noticeView.title}
+                     <span class="colorRed">( ${noticeView.cmt_cnt} )</span>
+                     </a>
+                  </div>
+                  <div>${noticeView.writer_id}</div>
+                  <div>${noticeView.regDate}</div>
+                  <div class="colorRed">${noticeView.hit}</div>
                </c:forEach>
             </div>
          </div>

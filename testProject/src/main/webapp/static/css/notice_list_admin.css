@@ -1,0 +1,27 @@
+/* 클래스 추가 */
+.noticeTable {
+   position: relative;
+}
+
+/* 기존 테이블 그리드 덮어쓰기 */
+.table {
+   grid-template-columns: 3fr 20fr 9fr 12fr 4fr 2fr 2fr;
+}
+
+/* 클래스 추가 */
+.dataControlBtn {
+   position: absolute;
+   bottom: -50px;
+   right: 0;
+   
+   display: grid;
+   gap: 5px;
+   grid-template-columns: repeat(3, 80px);
+   justify-content: center;
+}
+
+/* 클래스 추가 */
+.dataControlBtn button {
+   color: blue;
+   font-weight: bold;
+}

@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import com.psy7758.context.ServletContextHolder;
 import com.psy7758.dao.CommonModule;
 import com.psy7758.dto.Notice;
+import com.psy7758.dto.view.notice.NoticeView;
 
 public class MariaDao extends CommonModule {
    private static ServletContext context = ServletContextHolder.getServletContext();
@@ -23,8 +24,8 @@ public class MariaDao extends CommonModule {
    }
    
    @Override
-   public ArrayList<Notice> getNotices(int pageNum, String searchField, String searchWord, boolean pub) throws SQLException {
-      String selectSql = String.format("SELECT * FROM NOTICE "
+   public ArrayList<NoticeView> getNotices(int pageNum, String searchField, String searchWord, boolean pub) throws SQLException {
+      String selectSql = String.format("SELECT * FROM notice_view "
             + "WHERE %s LIKE ? %s "
             + "ORDER BY REGDATE DESC "
             + "LIMIT %d, %d;",
@@ -36,7 +37,7 @@ public class MariaDao extends CommonModule {
    
    @Override
    public int getNoticeCnt(String searchField, String searchWord, boolean pub) throws SQLException {
-      String selectSql = String.format("SELECT COUNT(ID) CNT FROM NOTICE WHERE %s LIKE ? %s",
+      String selectSql = String.format("SELECT COUNT(ID) CNT FROM notice WHERE %s LIKE ? %s",
             searchField, pub ? "" : "AND pub = 1");
       
       return getNoticeCntDb(selectSql, searchWord);
@@ -49,9 +50,9 @@ public class MariaDao extends CommonModule {
    
    @Override
    public Notice getPrevNotice(int id, String searchField, String searchWord, boolean pub) throws SQLException {
-      String selectSql = String.format("SELECT * FROM NOTICE "
+      String selectSql = String.format("SELECT * FROM notice "
             + "WHERE %s %s LIKE ? "
-            + "AND REGDATE < (SELECT REGDATE FROM NOTICE WHERE ID = ?)"
+            + "AND REGDATE < (SELECT REGDATE FROM notice WHERE ID = ?)"
             + "ORDER BY REGDATE DESC "
             + "LIMIT 1",
             pub ? "" : "pub = 1 AND", searchField);
@@ -61,9 +62,9 @@ public class MariaDao extends CommonModule {
 
    @Override
    public Notice getNextNotice(int id, String searchField, String searchWord, boolean pub) throws SQLException {
-      String selectSql = String.format("SELECT * FROM NOTICE "
+      String selectSql = String.format("SELECT * FROM notice "
             + "WHERE %s %s  LIKE ? "
-            + "AND REGDATE > (SELECT REGDATE FROM NOTICE WHERE ID = ?)"
+            + "AND REGDATE > (SELECT REGDATE FROM notice WHERE ID = ?)"
             + "LIMIT 1",
             pub ? "" : "pub = 1 AND", searchField);
       
@@ -71,9 +72,28 @@ public class MariaDao extends CommonModule {
    }
 
    @Override
-   public int setPub(String id) throws SQLException {
-      String updateSql = String.format("UPDATE client set pub = 1 WHERE id = ?");
+   public int setPub(int[] pubTrueId_, int[] pubFalseId_) throws SQLException {
+      String placeholders1 = String.join( ",", "?".repeat(pubTrueId_.length).split("") ),
+       placeholders2 = String.join( ",", "?".repeat(pubFalseId_.length).split("") );
       
-      return setPubDb(updateSql, id);
+      String pubSql = String.format("UPDATE notice set pub = 1 WHERE ID in(%s)", placeholders1),
+      nonePubSql = String.format("UPDATE notice set pub = 0 WHERE ID in(%s)", placeholders2);
+      
+      return setPubDb(pubSql, nonePubSql ,pubTrueId_, pubFalseId_);
+   }
+   
+   @Override
+   public int delNotice(int[] delId) throws SQLException {
+      String placeholders = String.join( ",", "?".repeat(delId.length).split("") );
+      String delSql = String.format("DELETE FROM notice WHERE ID in(%s)", placeholders);
+      
+      return delNoticeDb(delSql, delId);
+   }
+   
+   @Override
+   public int regNotice(Notice notice) throws SQLException {
+      String insertSql = "INSERT INTO notice(TITLE, WRITER_ID, FILES, CONTENT, pub) VALUES(?, ?, ?, ?, ?)";
+      
+      return regNoticeDb(insertSql, notice);
    }
 }

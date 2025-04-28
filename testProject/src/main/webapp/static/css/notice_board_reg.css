@@ -1,0 +1,45 @@
+* {
+    list-style: none;
+}
+
+.table {
+    display: grid;
+   
+   /* 행 추가 */
+    grid-template: repeat(4, 50px) 300px 30px / 2fr 7fr;
+    row-gap: 10px;
+}
+
+.table * {
+    border: 1px solid;
+    font-weight: bold;
+    
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.table *:nth-child(odd) {
+    background-color: lime;
+}
+
+.table *:nth-child(even) {
+    justify-content: start;
+    text-indent: 10px;
+}
+
+/* 행추가로 인한 nth-child 연산식 변경 */
+.table *:nth-child(n + 11), .limitMsg {
+   border: none;
+    color: red;
+    font-weight: bold;
+}
+
+.btn {
+   display: flex;
+    justify-content: center;
+}
+
+.hidden {
+   display: none;
+}

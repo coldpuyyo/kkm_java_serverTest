@@ -8,21 +8,25 @@ import com.psy7758.dao.imp.MariaDao;
 import com.psy7758.dao.imp.MysqlDao;
 //import com.psy7758.dao.imp.OracleDao;
 import com.psy7758.dto.Notice;
+import com.psy7758.dto.view.notice.NoticeView;
 import com.psy7758.service.Service;
 
 public class UserService implements Service{
 //   private Dao dao = new OracleDao();
-   private Dao dao = new MysqlDao();
-//   private Dao dao = new MariaDao();
-
+//   private Dao dao = new MysqlDao();
+   private Dao dao = new MariaDao();
+   
+   /*
+    * getNotices 메서드에 대한 반환 타입을 ArrayList<Notice> 에서 ArrayList<NoticeView> 로 변경.
+    */
    @Override
-   public ArrayList<Notice> getNotices(int pageNum){
+   public ArrayList<NoticeView> getNotices(int pageNum){
       return getNotices(pageNum, "id", "");
    }
    
    @Override
-   public ArrayList<Notice> getNotices(int pageNum, String searchField, String searchWord) {
-      ArrayList<Notice> notices = null;
+   public ArrayList<NoticeView> getNotices(int pageNum, String searchField, String searchWord) {
+      ArrayList<NoticeView> notices = null;
       try {
          notices = dao.getNotices(pageNum, searchField, searchWord, false);
       } catch (SQLException e) {
